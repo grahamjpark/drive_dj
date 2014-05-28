@@ -1,4 +1,9 @@
-drive_dj
+##Drive DJ
 ========
 
-Trying out different algorithms that make a playlist from a list of songs with the goal of finishing the last song at the end of the drive. Evaluated on execution time and closeness to time window.
+The eventual goal of this may be an app that coordinates with a music player with a navigation app (i.e. Spotify w/ Google Maps) and make a playlist that automatically makes it so that your last song finishes as you pull in to your destination.
+
+Right now song lists wil be randomly generated (or importing some of my own) and driving times will be randomly specified. The algorithms will be compared based on time it takes to create the playlist, and how close the playlist time is to the travelling time.
+
+####Possible Future Features
+- [ ] Include rating field for each song and judge playlists by "likeability"
