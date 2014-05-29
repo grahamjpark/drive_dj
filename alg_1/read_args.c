@@ -32,11 +32,11 @@ int ca_defined(char key[], Table* tbl) {
 char *ca_str_value(char* key, Table* tbl) {
 	if (!ca_defined(key, tbl)) return NULL;
 	
-	for (int i = 0; i < pos; i++) {
-		for (int j = 0; j < MAX_ARGS; j++) {
+	for (int i = 0; i < tbl->pos; i++) {
+		for (int j = 0; j < tbl->pos; j++) {
 			if ( key[j] == '\0' && tbl->keys[i][j] == '\0') {
 				//Returns a pointer to the array of values at position i
-				return a2p(values[i]);
+				return a2p(tbl->values[i]);
 			}
 			if ( key[j] == '\0') break;
 			if ( tbl->keys[i][j] == '\0') break;
@@ -92,13 +92,14 @@ void process_string(int len, char* arg, Table* tbl) {
 	}
 
 	//Begins looping through looking for the '\0' or '='
-	for (int i = 2; i <=; i < len; i++) {
+	for (int i = 2; i <= len; i++) {
 		if (arg[i] == '\0') {
 			//Sets keyPos to the spot where the key and value will go
 			// If the key is defined, to its index, if not, to the current position
+			int keyPos;
 			if (valueIdx(arg, i, tbl) != -1) 
 				keyPos = valueIdx(arg, i, tbl);
-			else int keyPos = tbl->pos;
+			else keyPos = tbl->pos;
 
 			//If it's adding a new one, realloc the arrays to the right size
 			if (keyPos == tbl->pos) {
@@ -116,35 +117,38 @@ void process_string(int len, char* arg, Table* tbl) {
 			tbl->keys[keyPos][i] = '\0';
 
 			//Stores empty string in value
-			tbl->values[keyPos] = (char*) malloc(sizeof('\0'));
-			tbl->values[keyPos] = "";
-			if (keyPos == tbl->pos) (tbl->pos)++;
+			if (keyPos == tbl->pos) {
+				tbl->values[keyPos] = (char*) malloc(sizeof('\0'));
+				tbl->values[keyPos] = "";
+				(tbl->pos)++;
+			}
 		} 
 		else if (arg[i] == '=') {
 			// Similar method as previous block
 			if ((i + 1) !=  len) {
+				int valPos;
 				if (valueIdx(arg, i, tbl) != -1) 
 					valPos = valueIdx(arg, i, tbl);
-				else int valPos = tbl->pos;
+				else valPos = tbl->pos;
 
-				if (valuePos == tbl->pos) {
+				if (valPos == tbl->pos) {
 					int arraySize = (tbl->pos +1)*sizeof(char*);
 					tbl->keys = (char**) realloc(tbl->keys, arraySize);
 					tbl->values = (char**) realloc(tbl->values, arraySize);
 				}
 
 				int keySize = i;
-				tbl->keys[valuePos] = (char*) malloc(keySize);
-				strncpy(tbl->keys[valuePos], arg+1, i -1);
-				tbl->keys[valuePos][i] = '\0';
+				tbl->keys[valPos] = (char*) malloc(keySize);
+				strncpy(tbl->keys[valPos], arg+1, i -1);
+				tbl->keys[valPos][i] = '\0';
 
 				int valSize = len - i;
-				tbl->values[valuePos] = (char*) malloc(valSize);
-				strcpy(tbl->values[valuePos], (arg + i + 1));
+				tbl->values[valPos] = (char*) malloc(valSize);
+				strcpy(tbl->values[valPos], (arg + i + 1));
 
-				tbl->values[valuePos][len +1] = '\0';
+				tbl->values[valPos][len +1] = '\0';
 		
-				if (valuePos == tbl->pos) (tbl->pos)++;
+				if (valPos == tbl->pos) (tbl->pos)++;
 			}
 			return;
 		}
@@ -157,9 +161,8 @@ void process_string(int len, char* arg, Table* tbl) {
  * alpha-numeric characters. All other string are silently discarded.  For
  * any key, only its last definition is retained.  "-key" has a NULL value.
  */
-Table* ca_init(int argc, char **argv) 
-{
-	if (argc == 0 || argv == NULL) return;
+Table* ca_init(int argc, char **argv) {
+	if (argc == 0 || argv == NULL) return NULL;
 
 	Table* tbl = (Table*) malloc(sizeof(Table));
 	tbl->pos = 0;
@@ -169,4 +172,16 @@ Table* ca_init(int argc, char **argv)
 		process_string(strlen(argv[i]), argv[i], tbl);
 
 	return tbl;
+}
+
+void print_table(Table* tbl) {
+	printf("Pos: %d\n", tbl->pos);
+	for (int i =0; i < tbl->pos; i++) {
+		printf("%s    %s\n", tbl->keys[i], tbl->values[i]);
+	}
+}
+
+int main(int argc, char **argv) {
+	Table* temp = ca_init(argc, argv);
+	print_table(temp);
 }

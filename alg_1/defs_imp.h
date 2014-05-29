@@ -3,6 +3,7 @@
 #include <string.h>
 #include <errno.h>
 #include <math.h>
+#include "read_args.h"
 
 typedef struct song {
 	char* name;
