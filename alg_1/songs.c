@@ -2,13 +2,13 @@
 
 Song* mk_song(char* name, int len) {
 	Song* temp = (Song*) malloc(sizeof(Song));
-	temp.name = name;
-	temp.len = len;
+	temp->name = name;
+	temp->len = len;
 	return temp;
 }
 
 void rm_song(Song* song) {
-	free(song.temp);
+	free(song->name);
 	free(song);
 }
 
@@ -27,13 +27,17 @@ void print_songs(Playlist* list) {
 	int min;
 	int sec;
 	for (int i = 0; i < list->num_songs; i++) {
-		min = (int) list->songs[i]->len / 60;
-		sec = list->songs[i]->len % 60;
+		min = (int) (list->songs[i]->len) / 60;
+		sec = (list->songs[i]->len) % 60;
 		printf("%d:%d\n", min, sec);
 	}
 }
 
-Playlist* generate(int len) {
+/*
+ *  Tries to generate songs that follows realistic songs lengths
+ */
+ //TODO: Test functions and refine, decided to use real songs first
+/*Playlist* generate_songs(int len) {
 	Playlist* temp = (Playlist*) malloc(sizeof(Playlist));
 	temp->songs = (Song*) malloc(sizeof(Song)*len);
 	temp->num_songs = len;
@@ -54,8 +58,78 @@ Playlist* generate(int len) {
 		}
 
 		// Scales the seeded 
-		song_length *= (100 + (rand()%60) - 30) / 100
+		song_length *= (100 + (rand()%60) - 30) / 100;
 		temp->songs[i]->len = song_length;
 	}
 	return temp;
+}
+*/
+int check_format(char* text, int len) {
+	//Index of the colon
+	int idx = -1;
+	if (len < 3) return -1;
+	for (int i = 0; i < len; i++) {
+		if (text[i] == '\0') return idx;
+		if (text[i] == ':' && idx == -1) {
+			idx = i;
+		}
+		if (text[i] < '0' || text[i] > '9') {
+			return -1;
+		}
+	}
+}
+
+void add_song(char* line, int len, Playlist* list) {
+	int idx = check_format(line, len);
+	if (idx != -1) {
+		int min = (int) strtol(line, NULL, 10);
+		int sec = (int) strtol(line[idx+1], NULL, 10);
+		int song_len = (min*60) + sec;
+		list->num_songs++;
+		//TODO: Relloc
+	}
+}
+
+/*
+ * Reads in a file of song lengths, with each time on a new line and of the
+ * format "MINUTES:SECONDS"
+ */
+Playlist* read_in(Table* args, char* file) {
+	FILE* fp;
+
+	if (ca_defined("file", args))
+		fp = fopen(file, "r");
+	else
+		return NULL;
+
+	Playlist* temp = (Playlist*) malloc(sizeof(Playlist));
+	temp->num_songs = 0;
+	temp->songs = (Song*) malloc(sizeof(Song)*(num_songs + 1);
+
+	char* line = (char*) malloc(sizeof(char)*10);
+	int len;
+	int cycling = 1;
+	while (cycling) {
+		//Resets length to zero
+		len = 0;
+		int c;
+
+		/*For every char that's not a \n add the char to line_temp
+		 * if the char is an EOF and it just started filling, don't continue
+		 * if the char is just EOF, finish cycle
+		 */
+		while ((c = fgetc(fp)) != '\n' && cycling) {
+			if (c == EOF && len == 0) {
+				cycling = 0;
+				break;
+			}
+			if (c == EOF)
+				cycling = 0;
+			else {
+				line[len++] = c;
+			}
+		}
+		line[len] = '\0';
+		add_song(line, len, temp);
+	}
 }

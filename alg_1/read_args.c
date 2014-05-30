@@ -12,7 +12,7 @@ char *a2p(char c[]) { return c; }
  *  Check if the null-terminated string key is defined. Answer 1 if either
  * "-key" or "-key=val" were passed at the command line, 0 otherwise.
  */
-int ca_defined(char key[], Table* tbl) { 
+int ca_defined(char* key, Table* tbl) { 
 	if (key == NULL || key[0] == '\0') return 0;
 	for (int i = 0; i < tbl->pos; i++) {
 		for (int j = 0; j < KEY_LEN; j++) {
@@ -179,9 +179,4 @@ void print_table(Table* tbl) {
 	for (int i =0; i < tbl->pos; i++) {
 		printf("%s    %s\n", tbl->keys[i], tbl->values[i]);
 	}
-}
-
-int main(int argc, char **argv) {
-	Table* temp = ca_init(argc, argv);
-	print_table(temp);
 }

@@ -19,7 +19,7 @@ typedef struct playlist {
 	double desired_len;
 	double cur_len;
 	//Array of songs
-	Song* list;
+	Song* songs;
 	// Number of songs
 	int num_songs;
 } Playlist;
