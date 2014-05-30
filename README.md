@@ -5,4 +5,5 @@ The eventual goal of this may be an app that coordinates with a music player wit
 Right now song lists wil be randomly generated (or importing some of my own) and driving times will be randomly specified. The algorithms will be compared based on time it takes to create the playlist, and how close the playlist time is to the travelling time.
 
 ####Possible Future Features
-- [ ] Include rating field for each song and judge playlists by "likeability"
+- [ ] Include rating field for each song and judge playlists by "likeability" 
+   - possibly using a Knapsack Sorting Method: http://en.wikipedia.org/wiki/Knapsack_problem
