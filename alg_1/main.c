@@ -9,8 +9,7 @@ int main(int argc, char *argv[]) {
 	else
 		Playlist* in = generate_songs(5);
 
-	Playlist* out = (Playlist*) malloc(sizeof(Playlist));
-	out->songs = (Song*) malloc(sizeof(Song));	
+	Playlist* out = create_list();
 	out->cur_len = 0;
 	num_songs = 0;
 
@@ -18,4 +17,6 @@ int main(int argc, char *argv[]) {
 		out->desired_len = ca_int_value("time", args);
 	else
 		out->desired_len = 5;
+
+	generate_list(in, out);
 }
