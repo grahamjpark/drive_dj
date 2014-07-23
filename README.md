@@ -2,7 +2,7 @@
 
 The eventual goal of this may be an app that coordinates with a music player with a navigation app (e.g. Spotify w/ Google Maps) and make a playlist that automatically makes it so that your last song finishes as you pull in to your destination.
 
-Right now song lists wil be randomly generated (or importing some of my own) and driving times will be randomly specified. The algorithms will be compared based on time it takes to create the playlist, and how close the playlist time is to the travelling time.
+Right now song lists wil be imported from sample song data and driving times will be randomly specified. The algorithms will be compared based on time it takes to create the playlist, and how close the playlist time is to the travelling time.
 
 ####Ideas for Methods of Sorting
 - Adding random songs until reaching a certain point. Then swapping songs in and out until the playlist is within the time window.
