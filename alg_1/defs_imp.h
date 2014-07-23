@@ -7,11 +7,13 @@
 #include "read_args.h"
 
 typedef struct song {
-	char* name;
+	//char* name;
 	//Length of song in seconds
 	double len;
-	//TODO: Implement rating weight. Will try to optimize to find most likeable playlist
-	//int rating;
+
+	//Use pointers to skip song once it's been added to list
+	Song* prev;
+	Song* next;
 } Song;
 
 typedef struct playlist {
@@ -22,4 +24,6 @@ typedef struct playlist {
 	Song* songs;
 	// Number of songs
 	int num_songs;
+	Song* head;
+	Song* tail;
 } Playlist;

@@ -1,18 +1,22 @@
 #include "defs_imp.h"
 
-double average(Playlist* list) {
-	//TODO: may be able to simplify if update playlist in length
-	double total = 0;
-	for (int i = 0; i < list->num_songs; i++)
-		total += (get_song(list, i))->len;
-	return total / list->num_songs;
-}
+/*
+ *  This file generates the playlist based on the input length and song list
+ */
 
 int check_thresh(Playlist* list) {
 	if (abs(list->desired_len - list->cur_len) <= list->threshold)
 		return 1;
 	else
 		return 0;
+}
+
+double average(Playlist* list) {
+	//TODO: may be able to simplify if update playlist in length
+	double total = 0;
+	for (int i = 0; i < list->num_songs; i++)
+		total += (get_song(list, i))->len;
+	return total / list->num_songs;
 }
 
 void generate_list(Playlist* in, Playlist* out) {

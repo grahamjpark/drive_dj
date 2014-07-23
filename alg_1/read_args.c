@@ -1,5 +1,10 @@
 #include "defs_imp.h"
 
+/* 
+ * Takes in the command line arguments and puts it into a table to be
+ * referenced for input file and algorithm to use.
+ */
+
 #define KEY_LEN 25
 #define VAL_LEN 255
 
