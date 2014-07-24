@@ -6,14 +6,14 @@
 #include <time.h>
 #include "read_args.h"
 
-typedef struct song {
+typedef struct Song {
 	//char* name;
 	//Length of song in seconds
 	double len;
 
 	//Use pointers to skip song once it's been added to list
-	Song* prev;
-	Song* next;
+	struct Song* prev;
+	struct Song* next;
 } Song;
 
 typedef struct playlist {

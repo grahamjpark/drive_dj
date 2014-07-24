@@ -8,13 +8,13 @@
 Song* mk_song(char* name, int len) {
 	Song* temp = (Song*) malloc(sizeof(Song));
 	temp->len = len;
-	temp->prev = NULL
+	temp->prev = NULL;
 	temp->next = NULL;
 	return temp;
 }
 
-void rm_song(Song* song) {
-	free(song->name);
+void free_song(Song* song) {
+	//free(song->name);
 	free(song);
 }
 
@@ -33,15 +33,15 @@ void sort(Song* songs, int len) {
 }
 
 void link_list(Playlist* in) {
-	num_songs = in->num_songs;
-	in->head = in->songs[0];
-	in->tail = in->songs[num_songs -1];
+	int num_songs = in->num_songs;
+	in->head = &(in->songs[0]);
+	in->tail = &(in->songs[num_songs -1]);
 	for(int i = 0; i < num_songs; i++) {
 		if(i != 0)
-			in->songs[i]->prev = in->songs[i-1];
+			(in->songs[i]).prev = &(in->songs[i-1]);
 
 		if(i != num_songs - 1) 
-			in->songs[i]->next = in->songs[i+1];
+			(in->songs[i]).next = &(in->songs[i+1]);
 	}
 }
 
@@ -49,8 +49,8 @@ void print_songs(Playlist* list) {
 	int min;
 	int sec;
 	for (int i = 0; i < list->num_songs; i++) {
-		min = (int) (list->songs[i]->len) / 60;
-		sec = (list->songs[i]->len) % 60;
+		min = (int) ((list->songs[i]).len) / 60;
+		sec = (int) ((list->songs[i]).len) % 60;
 		printf("%d:%d\n", min, sec);
 	}
 }
@@ -96,7 +96,7 @@ void add_new_song(char* line, int len, Playlist* list) {
 	int idx = check_format(line, len);
 	if (idx != -1) {
 		int min = (int) strtol(line, NULL, 10);
-		int sec = (int) strtol(line[idx+1], NULL, 10);
+		int sec = (int) strtol(&(line[idx+1]), NULL, 10);
 		int song_len = (min*60) + sec;
 		list->num_songs++;
 		//TODO: Relloc
@@ -118,13 +118,10 @@ Playlist* create_list() {
  * Reads in a file of song lengths, with each time on a new line and of the
  * format "MINUTES:SECONDS"
  */
-Playlist* read_in(Table* args, char* file) {
+Playlist* read_in(char* file) {
 	FILE* fp;
 
-	if (ca_defined("file", args))
-		fp = fopen(file, "r");
-	else
-		return NULL;
+	fp = fopen(file, "r");
 
 	Playlist* in = create_list();
 
@@ -151,6 +148,20 @@ Playlist* read_in(Table* args, char* file) {
 			}
 		}
 		line[len] = '\0';
-		add_new_song(line, len, temp);
+		add_new_song(line, len, in);
+	}
+}
+
+int main(int argc, char *argv[]) {
+	Table* args = ca_init(argc, argv);
+
+	if (ca_defined("file", args)) {
+		Playlist* in = read_in(ca_str_value("file", args));
+		sort(in->songs, in->num_songs);
+		link_list(in);
+	}
+	else {
+		//Playlist* in = generate_songs(5);
+		printf("Please designate an input song file using \"file=*your file* \"\n");
 	}
 }
