@@ -9,7 +9,7 @@
 typedef struct Song {
 	//char* name;
 	//Length of song in seconds
-	double len;
+	unsigned int len;
 
 	//Use pointers to skip song once it's been added to list
 	struct Song* prev;
@@ -21,7 +21,7 @@ typedef struct playlist {
 	double desired_len;
 	double cur_len;
 	//Array of songs
-	Song* songs;
+	Song** songs;
 	// Number of songs
 	int num_songs;
 	Song* head;

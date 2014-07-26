@@ -34,23 +34,25 @@ void sort(Song* songs, int len) {
 
 void link_list(Playlist* in) {
 	int num_songs = in->num_songs;
-	in->head = &(in->songs[0]);
-	in->tail = &(in->songs[num_songs -1]);
+	in->head = in->songs[0];
+	in->tail = in->songs[num_songs -1];
 	for(int i = 0; i < num_songs; i++) {
 		if(i != 0)
-			(in->songs[i]).prev = &(in->songs[i-1]);
+			in->songs[i]->prev = in->songs[i-1];
 
 		if(i != num_songs - 1) 
-			(in->songs[i]).next = &(in->songs[i+1]);
+			in->songs[i]->next = in->songs[i+1];
 	}
 }
 
 void print_songs(Playlist* list) {
 	int min;
 	int sec;
+	fprintf(stderr, "Made to print\n");
+	fprintf(stderr, "num_songs = %i\n", list->num_songs);
 	for (int i = 0; i < list->num_songs; i++) {
-		min = (int) ((list->songs[i]).len) / 60;
-		sec = (int) ((list->songs[i]).len) % 60;
+		min = (int) (list->songs[i]->len) / 60;
+		sec = (int) (list->songs[i]->len) % 60;
 		printf("%d:%d\n", min, sec);
 	}
 }
@@ -94,14 +96,29 @@ int check_format(char* text, int len) {
 
 void add_new_song(char* line, int len, Playlist* list) {
 	int idx = check_format(line, len);
-	fprintf(stderr, "idx=%i\n", idx);
 	if (idx != -1) {
 		int min = (int) strtol(line, NULL, 10);
 		int sec = (int) strtol(&(line[idx+1]), NULL, 10);
-		fprintf(stderr, "1.2.3\n");
-		int song_len = (min*60) + sec;
-		list->num_songs++;
-		//TODO: Relloc
+		unsigned int song_len = (min*60) + sec;
+		if (song_len > 2147483647 || song_len < 0) {
+			printf("Error processing song length.\n");
+			return;
+		}
+		list->num_songs += 1;
+
+		Song** temp = (Song**) realloc(list->songs, list->num_songs * sizeof(Song*));
+		if (temp != NULL) {
+			list->songs = temp;
+		}
+		else {
+			printf("Error reallocating memory to add new song.\n");
+			list->num_songs -= 1;
+			return;
+		}
+
+		Song* new_song = (Song*) malloc(sizeof(Song));
+		new_song->len = song_len;
+		list->songs[list->num_songs - 1] = new_song;
 	}
 	else {
 		return;
@@ -111,7 +128,7 @@ void add_new_song(char* line, int len, Playlist* list) {
 Playlist* create_list() {
 	Playlist* temp = (Playlist*) malloc(sizeof(Playlist));
 	temp->num_songs = 0;
-	temp->songs = (Song*) malloc(sizeof(Song));
+	temp->songs = (Song**) malloc(sizeof(Song*));
 	temp->head = NULL;
 	temp->tail = NULL;
 	return temp;
@@ -127,6 +144,7 @@ Playlist* read_in(char* file) {
 	fp = fopen(file, "r");
 
 	Playlist* in = create_list();
+	fprintf(stderr, "Num songs from read in: %i\n", in->num_songs);
 
 	char* line = (char*) malloc(sizeof(char)*10);
 	int len;
@@ -162,6 +180,8 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "1\n");
 		Playlist* in = read_in("songs.txt");//ca_str_value("file", args));
 		fprintf(stderr, "2\n");
+		fprintf(stderr, "from in, num songs: %i\n", in->num_songs);
+		print_songs(in);
 /*		sort(in->songs, in->num_songs);
 		fprintf(stderr, "4\n");
 		link_list(in);
