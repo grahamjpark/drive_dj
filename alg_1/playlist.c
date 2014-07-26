@@ -19,9 +19,11 @@ void free_song(Song* song) {
 }
 
 int song_compare(const void* a, const void* b) {
-	if (((Song*) a)->len -  ((Song*) b)->len > 0)
+	Song* ptr_a = *(Song**)a;
+	Song* ptr_b = *(Song**)b;
+	if (ptr_a->len > ptr_b->len)
 		return 1;
-	else if (((Song*) a)->len - ((Song*) b)->len < 0)
+	else if (ptr_a->len < ptr_b->len)
 		return -1;
 	else 
 		return 0;
@@ -48,7 +50,7 @@ void link_list(Playlist* in) {
 void print_songs(Playlist* list) {
 	int min;
 	int sec;
-	fprintf(stderr, "Made to print\n");
+	printf("Printing %i song(s):\n", list->num_songs);
 	for (int i = 0; i < list->num_songs; i++) {
 		min = (int) (list->songs[i]->len) / 60;
 		sec = (int) (list->songs[i]->len) % 60;
@@ -185,7 +187,6 @@ int main(int argc, char *argv[]) {
 
 	//if (ca_defined("file", args)) {
 		Playlist* in = read_in("songs.txt");//ca_str_value("file", args));
-		fprintf(stderr, "2\n");
 		sort(in->songs, in->num_songs);
 		print_songs(in);
 /*		fprintf(stderr, "4\n");
