@@ -80,12 +80,12 @@ int check_format(char* text, int len) {
 
 	//Parses through line, recording index of the colon.
 	//Non-numeric characters or two colons are recorded, returns -1
-	for (int i = 0; i < len; i++) {
+	for (int i = 0; i <= len; i++) {
 		if (text[i] == '\0') return idx;
-		if (text[i] == ':' && idx == -1) {
+		else if (text[i] == ':' && idx == -1) {
 			idx = i;
 		}
-		if (text[i] < '0' || text[i] > '9') {
+		else if (text[i] < '0' || text[i] > '9') {
 			return -1;
 		}
 	}
@@ -94,15 +94,18 @@ int check_format(char* text, int len) {
 
 void add_new_song(char* line, int len, Playlist* list) {
 	int idx = check_format(line, len);
+	fprintf(stderr, "idx=%i\n", idx);
 	if (idx != -1) {
 		int min = (int) strtol(line, NULL, 10);
 		int sec = (int) strtol(&(line[idx+1]), NULL, 10);
+		fprintf(stderr, "1.2.3\n");
 		int song_len = (min*60) + sec;
 		list->num_songs++;
 		//TODO: Relloc
 	}
-	else 
+	else {
 		return;
+	}
 }
 
 Playlist* create_list() {
@@ -155,13 +158,17 @@ Playlist* read_in(char* file) {
 int main(int argc, char *argv[]) {
 	Table* args = ca_init(argc, argv);
 
-	if (ca_defined("file", args)) {
-		Playlist* in = read_in(ca_str_value("file", args));
-		sort(in->songs, in->num_songs);
+	//if (ca_defined("file", args)) {
+		fprintf(stderr, "1\n");
+		Playlist* in = read_in("songs.txt");//ca_str_value("file", args));
+		fprintf(stderr, "2\n");
+/*		sort(in->songs, in->num_songs);
+		fprintf(stderr, "4\n");
 		link_list(in);
-	}
-	else {
+		fprintf(stderr, "5\n");*/
+	//}
+/*	else {
 		//Playlist* in = generate_songs(5);
 		printf("Please designate an input song file using \"file=*your file* \"\n");
-	}
+	}*/
 }
