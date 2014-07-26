@@ -19,17 +19,17 @@ void free_song(Song* song) {
 }
 
 int song_compare(const void* a, const void* b) {
-	if ((*(double*) a - *(double*) b) > 0)
+	if (((Song*) a)->len -  ((Song*) b)->len > 0)
 		return 1;
-	if ((*(double*) a - *(double*) b) < 0)
+	else if (((Song*) a)->len - ((Song*) b)->len < 0)
 		return -1;
 	else 
 		return 0;
 }
 
 
-void sort(Song* songs, int len) {
-	qsort(songs, len, sizeof(Song), song_compare);
+void sort(Song** songs, int len) {
+	qsort(songs, len, sizeof(Song*), song_compare);
 }
 
 void link_list(Playlist* in) {
@@ -49,7 +49,6 @@ void print_songs(Playlist* list) {
 	int min;
 	int sec;
 	fprintf(stderr, "Made to print\n");
-	fprintf(stderr, "num_songs = %i\n", list->num_songs);
 	for (int i = 0; i < list->num_songs; i++) {
 		min = (int) (list->songs[i]->len) / 60;
 		sec = (int) (list->songs[i]->len) % 60;
@@ -81,11 +80,12 @@ int check_format(char* text, int len) {
 	if (len < 4) return -1;
 
 	//Parses through line, recording index of the colon.
-	//Non-numeric characters or two colons are recorded, returns -1
+	//Non-numeric characters, 3 digits after colon, two colons are recorded, returns -1
 	for (int i = 0; i <= len; i++) {
 		if (text[i] == '\0') return idx;
 		else if (text[i] == ':' && idx == -1) {
 			idx = i;
+			if (len - idx != 3) return -1;
 		}
 		else if (text[i] < '0' || text[i] > '9') {
 			return -1;
@@ -94,7 +94,7 @@ int check_format(char* text, int len) {
 	return -1;
 }
 
-void add_new_song(char* line, int len, Playlist* list) {
+int add_new_song(char* line, int len, Playlist* list) {
 	int idx = check_format(line, len);
 	if (idx != -1) {
 		int min = (int) strtol(line, NULL, 10);
@@ -102,7 +102,7 @@ void add_new_song(char* line, int len, Playlist* list) {
 		unsigned int song_len = (min*60) + sec;
 		if (song_len > 2147483647 || song_len < 0) {
 			printf("Error processing song length.\n");
-			return;
+			return 1;
 		}
 		list->num_songs += 1;
 
@@ -113,7 +113,7 @@ void add_new_song(char* line, int len, Playlist* list) {
 		else {
 			printf("Error reallocating memory to add new song.\n");
 			list->num_songs -= 1;
-			return;
+			return 1;
 		}
 
 		Song* new_song = (Song*) malloc(sizeof(Song));
@@ -121,7 +121,7 @@ void add_new_song(char* line, int len, Playlist* list) {
 		list->songs[list->num_songs - 1] = new_song;
 	}
 	else {
-		return;
+		return -1;
 	}
 }
 
@@ -144,12 +144,15 @@ Playlist* read_in(char* file) {
 	fp = fopen(file, "r");
 
 	Playlist* in = create_list();
-	fprintf(stderr, "Num songs from read in: %i\n", in->num_songs);
 
 	char* line = (char*) malloc(sizeof(char)*10);
 	int len;
 	int cycling = 1;
+	int err;
+	int err_count = 0;
+
 	while (cycling == 1) {
+		err = 1;
 		len = 0;
 		int c;
 
@@ -169,21 +172,23 @@ Playlist* read_in(char* file) {
 			}
 		}
 		line[len] = '\0';
-		add_new_song(line, len, in);
+		err = add_new_song(line, len, in);
+		if (err == -1)
+			err_count++;
 	}
+	printf("%i song(s) recorded with %i line(s) ommited\n", in->num_songs, err_count);
+	return in;
 }
 
 int main(int argc, char *argv[]) {
 	Table* args = ca_init(argc, argv);
 
 	//if (ca_defined("file", args)) {
-		fprintf(stderr, "1\n");
 		Playlist* in = read_in("songs.txt");//ca_str_value("file", args));
 		fprintf(stderr, "2\n");
-		fprintf(stderr, "from in, num songs: %i\n", in->num_songs);
+		sort(in->songs, in->num_songs);
 		print_songs(in);
-/*		sort(in->songs, in->num_songs);
-		fprintf(stderr, "4\n");
+/*		fprintf(stderr, "4\n");
 		link_list(in);
 		fprintf(stderr, "5\n");*/
 	//}
