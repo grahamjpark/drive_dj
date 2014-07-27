@@ -84,16 +84,25 @@ void add_song(Playlist* list, Song* song) {
 	//TODO: Update with new song structure (update cur length)
 }
 
-/*
- * Adds random song from list_in to list_out and updates list_out structure
- * NOTE: Function DOES remove song from list_in's linked list
- */
-Song* add_rand_song(Playlist* list_in, Playlist list_out) {
-	//TODO: Update with new song structure
+Song* jump_songs(Song* cur, jumps, goal) {
+	if (jumps == goal || cur->next == NULL)
+		return cur;
+	else if
+		return jump_songs(cur-next, ++jumps, goal);
 }
 
 /*
- * Access song at  idx from list
+ * Picks random song from in, does not update structure
+ */
+Song* pick_rand_song(Playlist* in) {
+	srand(time(NULL));
+	int jump = rand() % in->num_songs;
+	Song* sng = jump_songs(in->head, 0, jump);
+	return sng;
+}
+
+/*
+ * Access song at idx from list
  */
 Song* get_song(Playlist* list, int idx) {
 	if(i < list->num_songs && i >= 0)

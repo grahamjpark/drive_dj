@@ -54,22 +54,26 @@ Song* recur_replace(Song* cur, Song* tail, Song* replacing, double buffer) {
 void generate_list(Playlist* in, Playlist* out) {
 	double buffer = out->desired_len;
 	double average_len = average(in);
+	Song* temp;
 	while (buffer > average_len) {
-		add_rand_song(out, in);
+		temp = pick_rand_song(in);
+		add_song(out, temp);
+		remove_song(in, temp);
 		buffer = out->desired_len - out->cur_len;
 	}
 
 	Song* best = recur_fill(in->head, in->tail, buffer);
 
 	add_song(out, best);
-	buffer = out->desired_len - out->cur_len;
 	remove_song(in, best);
+	buffer = out->desired_len - out->cur_len;
 
 	if (check_thresh(out))
 		return;
 
 	for (int i = 0; i < out->num_songs; i++) {
 		Song* best = recur_replace(in->head, in->tail, get_song(out, i), buffer);
+		//TODO: Designate which song to replace?
 		replace_song(out, in, best);
 		buffer = out->desired_len - out->cur_len;
 		if (check_thresh(out))
