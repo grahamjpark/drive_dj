@@ -58,6 +58,14 @@ void print_songs(Playlist* list) {
 	}
 }
 
+void print_linked(Song* cur, Song* tail) {
+	int min = (int) (cur->len) / 60;
+	int sec = (int) (cur->len) % 60;
+	printf("%d:%d\n", min, sec);
+	if (cur != tail)
+		print_linked(cur->next, tail);
+}
+
 
 void add_song(Playlist* list, Song* song) {
 	//TODO: Update with new song structure (update cur length)
@@ -189,9 +197,9 @@ int main(int argc, char *argv[]) {
 		Playlist* in = read_in("songs.txt");//ca_str_value("file", args));
 		sort(in->songs, in->num_songs);
 		print_songs(in);
-/*		fprintf(stderr, "4\n");
 		link_list(in);
-		fprintf(stderr, "5\n");*/
+		//print_linked(in->head, in->tail);
+		fprintf(stderr, "5\n");
 	//}
 /*	else {
 		//Playlist* in = generate_songs(5);
