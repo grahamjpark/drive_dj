@@ -76,19 +76,19 @@ void print_linked(Song* cur, Song* tail) {
 }
 
 /*
- * Adds selected song to playlist and updates Playlist structure
- * NOTE: Function does not remove song from anywhere
+ * Adds selected song to playlist and updates Playlist array
+ * NOTE: Function does not remove song from anywhere or update linked list
  */
 void add_song(Playlist* list, Song* song) {
-
-	//TODO: Update with new song structure (update cur length)
+	Song** temp = (Song**) realloc(list->songs, sizeof(Song*) * ++(list->num_songs));
+	list->songs[list->num_songs - 1] = song;
 }
 
-Song* jump_songs(Song* cur, jumps, goal) {
+Song* jump_songs(Song* cur, int jumps, int goal) {
 	if (jumps == goal || cur->next == NULL)
 		return cur;
-	else if
-		return jump_songs(cur-next, ++jumps, goal);
+	else
+		return jump_songs(cur->next, ++jumps, goal);
 }
 
 /*
@@ -105,8 +105,8 @@ Song* pick_rand_song(Playlist* in) {
  * Access song at idx from list
  */
 Song* get_song(Playlist* list, int idx) {
-	if(i < list->num_songs && i >= 0)
-		return list->songs[i];
+	if(idx < list->num_songs && idx >= 0)
+		return list->songs[idx];
 	else {
 		printf("Error accessing song: idx out of bounds");
 		return NULL;
@@ -114,10 +114,13 @@ Song* get_song(Playlist* list, int idx) {
 }
 
 /*
- * Removes song from playlist's linked list, but leaves it in the array for future repopulation
+ * Removes song from the input playlist's linked list, but leaves it in the array for future repopulation
  */
-void remove_song(Playlist* list, Song* song) {
-	//TODO: Update with new song structure
+void remove_song(Song* song) {
+	Song* one = song->prev;
+	Song* two = song->next;
+	one->next = two;
+	two->prev = one;
 }
 
 /*

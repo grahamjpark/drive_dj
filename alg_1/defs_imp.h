@@ -12,6 +12,8 @@ typedef struct Song {
 	unsigned int len;
 
 	//Use pointers to skip song once it's been added to list
+	//NOTE: pointers can only be used in one list, therefore they can only
+	//		be reference when using them in the input list
 	struct Song* prev;
 	struct Song* next;
 } Song;
@@ -24,6 +26,8 @@ typedef struct playlist {
 	Song** songs;
 	// Number of songs
 	int num_songs;
+
+	//Current first and last song of the list
 	Song* head;
 	Song* tail;
 } Playlist;

@@ -49,7 +49,7 @@ Song* recur_replace(Song* cur, Song* tail, Song* replacing, double buffer) {
 	else
 		return best;
 }
-
+//TODO: can not update songs next and prev pointers until out of list (aka, can't linked list output till finished)
 //TODO: if song is close to twice the average length try replacing it with two songs
 void generate_list(Playlist* in, Playlist* out) {
 	double buffer = out->desired_len;
