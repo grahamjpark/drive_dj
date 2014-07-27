@@ -34,6 +34,9 @@ void sort(Song** songs, int len) {
 	qsort(songs, len, sizeof(Song*), song_compare);
 }
 
+/*
+ * Uses a list's array to update head and tail, as well as pointers at each song node
+ */
 void link_list(Playlist* in) {
 	int num_songs = in->num_songs;
 	in->head = in->songs[0];
@@ -47,6 +50,9 @@ void link_list(Playlist* in) {
 	}
 }
 
+/*
+ * Prints songs using the list's array (for debugging purposes)
+ */
 void print_songs(Playlist* list) {
 	int min;
 	int sec;
@@ -58,6 +64,9 @@ void print_songs(Playlist* list) {
 	}
 }
 
+/*
+ * Prints songs using the list's linked list (for debugging purposes)
+ */
 void print_linked(Song* cur, Song* tail) {
 	int min = (int) (cur->len) / 60;
 	int sec = (int) (cur->len) % 60;
@@ -66,23 +75,61 @@ void print_linked(Song* cur, Song* tail) {
 		print_linked(cur->next, tail);
 }
 
-
+/*
+ * Adds selected song to playlist and updates Playlist structure
+ * NOTE: Function does not remove song from anywhere
+ */
 void add_song(Playlist* list, Song* song) {
+
 	//TODO: Update with new song structure (update cur length)
 }
 
-Song* select_random_song(Playlist* list) {
+/*
+ * Adds random song from list_in to list_out and updates list_out structure
+ * NOTE: Function DOES remove song from list_in's linked list
+ */
+Song* add_rand_song(Playlist* list_in, Playlist list_out) {
 	//TODO: Update with new song structure
 }
 
+/*
+ * Access song at  idx from list
+ */
 Song* get_song(Playlist* list, int idx) {
-	//TODO: Update with new song structure
+	if(i < list->num_songs && i >= 0)
+		return list->songs[i];
+	else {
+		printf("Error accessing song: idx out of bounds");
+		return NULL;
+	}
 }
 
+/*
+ * Removes song from playlist's linked list, but leaves it in the array for future repopulation
+ */
 void remove_song(Playlist* list, Song* song) {
 	//TODO: Update with new song structure
 }
 
+/*
+ * Swaps the song at idx of out playlist with track. It removes track from in's linkedlist
+ * and adds song at idx of out to in's linked list
+ */
+void replace_song(Playlist* out, Playlist* in, Song* track, int idx) {
+	//TODO: make this works
+}
+
+/*
+ * Fills the linked list of list from it's array
+ */
+void repopulate(Playlist* list) {
+	//TODO: this
+}
+
+/*
+ * Checks that the text format of a song is right. If so it returns inx of colon,
+ * if not it returns -1
+ */
 int check_format(char* text, int len) {
 	//Index of the colon
 	int idx = -1;
@@ -104,6 +151,9 @@ int check_format(char* text, int len) {
 	return -1;
 }
 
+/*
+ * Creates a new song and adds it to the playlist's array
+ */
 int add_new_song(char* line, int len, Playlist* list) {
 	int idx = check_format(line, len);
 	if (idx != -1) {
@@ -135,6 +185,9 @@ int add_new_song(char* line, int len, Playlist* list) {
 	}
 }
 
+/* 
+ * Creates new playlist
+ */
 Playlist* create_list() {
 	Playlist* temp = (Playlist*) malloc(sizeof(Playlist));
 	temp->num_songs = 0;

@@ -5,7 +5,7 @@ int main(int argc, char *argv[]) {
 	Table* args = ca_init(argc, argv);
 
 	if (ca_defined("file", args)) {
-		Playlist* in = read_in(args, ca_str_value("file", args))
+		Playlist* in = read_in(ca_str_value("file", args))
 		sort(in->songs, in->num_songs);
 		link_list(in);
 	}
@@ -16,12 +16,12 @@ int main(int argc, char *argv[]) {
 
 	Playlist* out = create_list();
 	out->cur_len = 0;
-	num_songs = 0;
 
 	if (ca_defined("time", args))
 		out->desired_len = ca_int_value("time", args);
-	else
-		printf("Please designate a target drive time using \"time=*your time* \"\n")
-
+	else {
+		printf("Please designate a target drive time using \"time=*your time* \"\n");
+		return
+	}
 	generate_list(in, out);
 }
