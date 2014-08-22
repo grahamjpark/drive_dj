@@ -133,28 +133,27 @@ void remove_song(Playlist* in, Song* song) {
 }
 
 void place_in_list(Song* fire, Song* cur, Playlist* list) {
+	if (cur == list->head & fire->len < cur->len) {
+		fire->prev = NULL;
+		fire->next = cur;
+		cur->prev = fire;
+		list->head = fire;
+	}
 	if (cur == list->tail) {
 		cur->next = fire;
 		fire->prev = cur;
 		fire->next = NULL;
 		list->tail = fire;
 	}
-	else if (fire->len <= cur->len)
+	else if (fire->len > cur->len) {
 		place_in_list(fire, cur->next, list);
-	else if (fire->len < cur->len) {
-		if (cur != list->head) {
-			Song* temp = cur->prev;
-			temp->next = fire;
-			cur->prev = fire;
-			fire->prev = temp;
-			fire->next = cur;
-		}
-		else {
-			fire->prev = NULL;
-			fire->next = cur;
-			cur->prev = fire;
-			list->head = fire;
-		}
+	}
+	else if (fire->len <= cur->len) {
+		Song* temp = cur->prev;
+		temp->next = fire;
+		cur->prev = fire;
+		fire->prev = temp;
+		fire->next = cur;
 	}
 	else
 		printf("Something went terribly terribly wrong in place_in_list...\n");
@@ -301,7 +300,6 @@ Playlist* read_in(char* file) {
 	return in;
 }
 
-//TODO: Try adding a new song and sorting in. 
 int main(int argc, char *argv[]) {
 	Table* args = ca_init(argc, argv);
 
@@ -311,7 +309,10 @@ int main(int argc, char *argv[]) {
 		print_songs(in);
 		link_list(in);
 		//print_linked(in->head, in->tail);
-		fprintf(stderr, "5\n");
+		Song* sng = mk_song("Add", 138);
+		place_in_list(sng, in->head, in);
+		printf("\n\n");
+		print_linked(in->head, in->tail);
 	//}
 /*	else {
 		//Playlist* in = generate_songs(5);
