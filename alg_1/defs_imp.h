@@ -26,6 +26,8 @@ typedef struct playlist {
 	Song** songs;
 	// Number of songs
 	int num_songs;
+	// Number of songs when full
+	int full_num_songs;
 
 	//Current first and last song of the list
 	Song* head;

@@ -38,7 +38,7 @@ void sort(Song** songs, int len) {
  * Uses a list's array to update head and tail, as well as pointers at each song node
  */
 void link_list(Playlist* in) {
-	int num_songs = in->num_songs;
+	int num_songs = in->full_num_songs;
 	in->head = in->songs[0];
 	in->tail = in->songs[num_songs -1];
 	for(int i = 0; i < num_songs; i++) {
@@ -116,26 +116,71 @@ Song* get_song(Playlist* list, int idx) {
 /*
  * Removes song from the input playlist's linked list, but leaves it in the array for future repopulation
  */
-void remove_song(Song* song) {
-	Song* one = song->prev;
-	Song* two = song->next;
-	one->next = two;
-	two->prev = one;
+void remove_song(Playlist* in, Song* song) {
+	Song* front = song->prev;
+	Song* back = song->next;
+	if(in->head != song && in->tail != song) {
+		front->next = back;
+		back->prev = front;
+	}
+	else if (in->head == song) {
+		in->head = back;
+	}
+	else if (in->tail == song) {
+		in->tail = front;
+	}
+	in->num_songs--;
+}
+
+void place_in_list(Song* fire, Song* cur, Playlist* list) {
+	if (cur == list->tail) {
+		cur->next = fire;
+		fire->prev = cur;
+		fire->next = NULL;
+		list->tail = fire;
+	}
+	else if (fire->len <= cur->len)
+		place_in_list(fire, cur->next, list);
+	else if (fire->len < cur->len) {
+		if (cur != list->head) {
+			Song* temp = cur->prev;
+			temp->next = fire;
+			cur->prev = fire;
+			fire->prev = temp;
+			fire->next = cur;
+		}
+		else {
+			fire->prev = NULL;
+			fire->next = cur;
+			cur->prev = fire;
+			list->head = fire;
+		}
+	}
+	else
+		printf("Something went terribly terribly wrong in place_in_list...\n");
 }
 
 /*
- * Swaps the song at idx of out playlist with track. It removes track from in's linkedlist
- * and adds song at idx of out to in's linked list
+ * Places ice into spot idx of banana. Removes ice from apple's linkedlist and adds to apple's
+ * linkedlist the song at location idx of banana.
  */
-void replace_song(Playlist* out, Playlist* in, Song* track, int idx) {
-	//TODO: make this works
+void replace_song(Playlist* banana, Playlist* apple, Song* ice, int idx) {
+	// First adds to apple's linkedlist the song at location idx of banana.
+	Song* fire = banana->songs[idx];
+	place_in_list(fire, apple->head, apple);
+
+	// Removes ice from apple's linkedlist
+	remove_song(apple, ice);
+
+	// Places ice into spot idx of banana.
+	banana->songs[idx] = ice;
 }
 
 /*
  * Fills the linked list of list from it's array
  */
 void repopulate(Playlist* list) {
-	//TODO: this
+	link_list(list);
 }
 
 /*
@@ -251,10 +296,12 @@ Playlist* read_in(char* file) {
 		if (err == -1)
 			err_count++;
 	}
+	in->full_num_songs = in->num_songs;
 	printf("%i song(s) recorded with %i line(s) ommited\n", in->num_songs, err_count);
 	return in;
 }
 
+//TODO: Try adding a new song and sorting in. 
 int main(int argc, char *argv[]) {
 	Table* args = ca_init(argc, argv);
 
