@@ -12,4 +12,5 @@ Right now song lists wil be imported from sample song data and driving times wil
 ####Possible Future Features
 - [ ] Include rating field for each song and judge playlists by "likeability" 
    - possibly using a Knapsack Sorting Method: http://en.wikipedia.org/wiki/Knapsack_problem
+- [ ] Ordering the playlist so that longer songs trend toward the center of the trip and shorter towards the beginning and end to match the typical 'energy'
 
